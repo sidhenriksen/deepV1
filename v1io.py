@@ -14,6 +14,7 @@ class ExperimentData:
 
     def __init__(self,cellName):
 
+        cellName += '.mat' if '.mat' not in cellName else ''
         rawData = load_file(cellName)
         base = rawData['NimCell'][0][0]
 
@@ -37,6 +38,19 @@ class ExperimentData:
         X = self.X[idx,:]
         y = self.y[idx]
         return X,y
+
+    def get_embedded_data(self,nTimePoints=15,runDur=30):
+
+        X,y = get_data(self,runDur=runDur)
+
+        XEmbedded = np.zeros([X.shape[0],nTimePoints,X.shape[1]])
+        for k in range(X.shape[0]):
+            kback = np.min([k-nTimePoints,0])
+            nFrames = k-kback
+            XEmbedded[k,:nFrames] = X[k:back,:]
+
+        return XEmbedded,y
+        
         
 if __name__ == "__main__":
     
